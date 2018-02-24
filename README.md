@@ -16,5 +16,7 @@ The overall project structure is based on the [Data Science is Software](https:/
 │
 ├── src/               <- refactored source code
 │
+├── Makefile           <- automation for common commands
+│
 └── requirements.txt   <- necessary modules
 ```
