@@ -1,15 +1,16 @@
-version: "3"
+ersion: "3"
 services:
   computation:
     container_name: jupyter_container
-    image: jupyter/scipy-notebook
+    build: docker/jupyter
     volumes:
       - ./:/home/jovyan/work
     ports:
       - "7777:8888"
-    env_file: .env
+    env_file:
+      - config/jupyter.env
   database:
-    container_name: potgres_container
+    container_name: postgres_container
     image: postgres
     ports:
       - "5432:5432"
