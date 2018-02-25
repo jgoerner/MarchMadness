@@ -4,6 +4,7 @@ from tempfile import TemporaryDirectory
 os.chdir("/home/jovyan/work")
 
 import boto3
+import inflection
 import pandas as pd
 import sqlalchemy
 
@@ -35,7 +36,7 @@ def fetch_data():
             print("#"*(len(name)+15))
 
             # skip if table already exists
-            t_name = "t_original_{}".format(name.replace(".csv", ""))
+            t_name = "t_original_{}".format(inflection.underscore(name.replace(".csv", "")))
             tbl_already_exists = pd.read_sql(query, con=engine, params={'table': t_name}).shape[0]
             if tbl_already_exists:
                 print("Table '{}' already exists".format(name))
