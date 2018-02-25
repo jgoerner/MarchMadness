@@ -2,12 +2,12 @@
 This "wrapper" repository is used to build up the computational environment (e.g. jupyter, postgresql, ...).<br> 
 The actual content of the repository can be [found here](https://github.com/jgoerner/MarchMadness/tree/master/MarchMadness)
 
-# Requirements
+## Requirements
 - [docker](https://docs.docker.com/install/)
 - [docker-compose](https://docs.docker.com/compose/install/)
 - a valid `jupyter.env` file containing access keys & tokens (send me a note)
 
-# Setup of the environment
+## Setup of the environment
 0. put the `jupyter.env` into `./config` (build will fail if you don't)
 1. build the composed images via `docker-compose build`
 2. run the application via `docker-compose up -d`
