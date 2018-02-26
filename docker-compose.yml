@@ -14,3 +14,8 @@ services:
     image: postgres
     ports:
       - "5432:5432"
+  dashboard:
+    container_name: superset_container
+    image: tylerfowler/superset
+    ports:
+      - "7077:8088"
