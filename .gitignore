@@ -101,4 +101,4 @@ ENV/
 .mypy_cache/
 
 # ENV files
-./config/*
+./config/jupyter.env
