@@ -11,6 +11,9 @@ import sqlalchemy
 
 def fetch_data():
     """Fetch Data from S3 and put it into the database"""
+    print("\n" + "/"*111)
+    print("/" + " "*44 + "DOWNLOAD DATA FROM S3" + " "*44 + "/")
+    print("/"*111 + "\n\n")
     # get S3 Connection
     s3 = boto3.resource("s3", 
                         aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
@@ -51,6 +54,7 @@ def fetch_data():
             df = pd.read_csv(path)
 
             # serialize dataframe to database
+            # TODO: lower column name
             df.to_sql(t_name, con=engine, if_exists="fail")
 
 
