@@ -28,5 +28,5 @@ def write_table(dataframe, t_name, prefix="t_derived_"):
     if table_exists(t_name_composed):
         raise ValueError("Table {} already exists".format(t_name_composed))
     else:
-        dataframe.to_sql(t_name_composed, con=get_connection())
+        dataframe.to_sql(t_name_composed, con=get_connection(), index=False)
     return t_name_composed
