@@ -52,10 +52,12 @@ def fetch_data():
             s3.Bucket("jgoerner-kaggle").download_file(name, str(path))
             print("Ingesting\n")
             df = pd.read_csv(path)
+            
+            # lower column names for postgres compliance
+            df.columns = map(lambda col: inflection.underscore(col), df.columns)
 
             # serialize dataframe to database
-            # TODO: lower column name
-            df.to_sql(t_name, con=engine, if_exists="fail")
+            df.to_sql(t_name, con=engine, if_exists="fail", index=False)
 
 
 if __name__ == "__main__":
