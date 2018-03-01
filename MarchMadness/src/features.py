@@ -5,7 +5,6 @@ from utils import get_connection, get_table, write_table
 
 def calculate_wins_per_team_per_season():
     """Get wins per season per team"""
-    # get the source table
     df_regular_season = get_table("t_original_regular_season_compact_results")
     df_wins_per_team_per_seaons = df_regular_season.groupby(["season","w_team_id"]).size().reset_index()
     df_wins_per_team_per_seaons.columns = ["season", "team_id", "wins"]
@@ -20,7 +19,6 @@ def calculate_losses_per_team_per_season():
 
 def calculate_mean_score_per_team_per_season():
     """Get the average score per team per season"""
-    # get source table
     pd = get_table("t_original_regular_season_compact_results")
     # cover case team == winner
     df_scores_winner = pd[["season", "w_team_id", "w_score"]]
@@ -33,3 +31,12 @@ def calculate_mean_score_per_team_per_season():
     df_mean_scores_per_team_per_season = df_scores_teams.groupby(["season", "team_id"])["score"].mean().reset_index()
     df_mean_scores_per_team_per_season.columns = ["season", "team_id", "score_avg"]
     write_table(df_mean_scores_per_team_per_season, "mean_score_per_team_per_season")
+    
+def calculate_seed_rank_per_team_per_season():
+    df_seed_rank_per_team_per_season = get_table("t_original_ncaa_tourney_seeds")
+    # strip beginning region and optional "a/b" (which might be of interest later on)
+    df_seed_rank_per_team_per_season["seed_rank"] = df_seed_rank_per_team_per_season["seed"].apply(
+        lambda seed: int(seed[1:]) if len(seed) == 3 else int(seed[1:-1]))
+    df_seed_rank_per_team_per_season.drop("seed", axis=1, inplace=True)
+    write_table(df_seed_rank_per_team_per_season, "seed_rank_per_team_per_season")
+    
