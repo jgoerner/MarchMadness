@@ -4,6 +4,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from scipy.stats import beta
+from sklearn.metrics import log_loss
 from sqlalchemy import create_engine, text
 
 
@@ -130,3 +131,12 @@ def build_surrogate_keys(df, team_cols):
         + "_" + df[team_cols].max(axis=1).astype(str)
     df_result["surrogate_key"] = key
     return df_result
+
+def evaluate_log_loss(preds):
+    """Evaluate log loss, given that all true labels are 1"""
+    # check that preds are series
+    if not isinstance (preds, pd.Series):
+        raise ValueError("Must pass a pandas Series, got {}".format(type(preds)))
+    true_labels = np.ones(len(preds))
+    ll = log_loss(true_labels, preds, labels=[1, 0])
+    return ll
