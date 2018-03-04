@@ -1,9 +1,11 @@
 from features import (
-    calculate_wins_per_team_per_season, 
     calculate_losses_per_team_per_season,
     calculate_mean_score_per_team_per_season,
-    calculate_seed_rank_per_team_per_season,
     calculate_mean_stats_per_team_per_season,
+    calculate_ncaa_losses_per_team,
+    calculate_ncaa_wins_per_team,
+    calculate_seed_rank_per_team_per_season,
+    calculate_wins_per_team_per_season, 
 )
 
 def derive_features():
@@ -14,6 +16,8 @@ def derive_features():
         ("mean score per team per season", calculate_mean_score_per_team_per_season),
         ("seed rank per team per season", calculate_seed_rank_per_team_per_season),
         ("mean stats per team per season", calculate_mean_stats_per_team_per_season),
+        ("ncaa wins per team", calculate_ncaa_wins_per_team),
+        ("ncaa losses per team", calculate_ncaa_losses_per_team),
     ]
     
     print("\n" + "/"*112)

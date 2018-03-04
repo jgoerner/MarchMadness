@@ -83,3 +83,17 @@ def calculate_mean_stats_per_team_per_season():
     df_mean_stats_per_team_per_season =\
         df_results_winner.append(df_results_loser).groupby(["season", "team_id"]).mean().reset_index()
     write_table(df_mean_stats_per_team_per_season, "mean_stats_per_team_per_season")
+
+def calculate_ncaa_wins_per_team():
+    """Get all NCAA wins per team"""
+    df_ncaa = get_table("t_original_ncaa_tourney_compact_results")
+    df_ncaa_wins_per_team = df_ncaa.groupby("w_team_id").size().reset_index()
+    df_ncaa_wins_per_team.columns = ["team_id", "wins"]
+    write_table(df_ncaa_wins_per_team, "ncaa_wins_per_team")
+
+def calculate_ncaa_losses_per_team():
+    """Get all NCAA wins per team"""
+    df_ncaa = get_table("t_original_ncaa_tourney_compact_results")
+    df_ncaa_losses_per_team = df_ncaa.groupby("l_team_id").size().reset_index()
+    df_ncaa_losses_per_team.columns = ["team_id", "losses"]
+    write_table(df_ncaa_losses_per_team, "ncaa_losses_per_team")
