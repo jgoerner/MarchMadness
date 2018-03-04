@@ -89,3 +89,44 @@ def calc_odds(df_teams, N_SAMPLE=1000, N_EXPERIMENT=1000):
     df_result = df_teams.copy()
     df_result["odds_a"] = odds
     return df_result
+
+def sample_submission_to_df(df_submission):
+    """Declutter the submission file's id"""
+    # check is df
+    if not isinstance(df_submission, pd.DataFrame):
+        raise ValueError("Must pass a pandas DatFrame, got {}".format(type(df_submission)))
+    # check has cols
+    if not "id" in df_submission.columns:
+        raise ValueError("DataFrame must contain an 'id' column")
+
+    # build the dataframe
+    df_result = pd.DataFrame()
+    df_result["season"] = df_submission["id"].apply(lambda item: item[:4])
+    df_result["team_id_a"] = df_submission["id"].apply(lambda item: item[5:9])
+    df_result["team_id_b"] = df_submission["id"].apply(lambda item: item[10:])
+    
+    # conver to numerical colums types
+    df_result = df_result.apply(pd.to_numeric)
+    return df_result
+
+def build_surrogate_keys(df, team_cols):
+    """Concat season team id A (lower) and team id B (upper)"""
+    # check df
+    if not isinstance(df, pd.DataFrame):
+        raise ValueError("Must pass a pandas DataFrame, got {}".format(type(df)))
+    # check df contains 'seasons'
+    if not "season" in df.columns:
+        raise ValueError("DataFrame must have a 'season' column")
+    # check len(team_cols) == 2
+    if len(team_cols) != 2:
+        raise ValueError("Specify exactly 2 team columns, got {}".format(len(team_cols)))
+    # check cols in df
+    if not set(team_cols).issubset(df.columns):
+        raise ValueError("Team columns must be present in df columns")
+    df_result = df.copy()
+    key = \
+        df["season"].astype(str)\
+        + "_" + df[team_cols].min(axis=1).astype(str)\
+        + "_" + df[team_cols].max(axis=1).astype(str)
+    df_result["surrogate_key"] = key
+    return df_result
