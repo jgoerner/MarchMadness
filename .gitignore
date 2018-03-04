@@ -102,3 +102,6 @@ ENV/
 
 # ENV files
 ./config/jupyter.env
+
+# Other stuff
+*.DS_STORE
