@@ -175,3 +175,65 @@ def calculate_losses_per_team_per_season_by_ot():
     df_losses_per_team_per_seaons_by_ot["losses_ot"] = df_losses_per_team_per_seaons_by_ot["losses_ot"].astype(int)
     df_losses_per_team_per_seaons_by_ot["losses_no_ot"] = df_losses_per_team_per_seaons_by_ot["losses_no_ot"].astype(int)
     write_table(df_losses_per_team_per_seaons_by_ot, "losses_per_team_per_seaons_by_ot")
+
+def calculate_ncaa_wins_per_team_by_ot():
+    df_ncaa = get_table("t_original_ncaa_tourney_compact_results")
+
+    # Aggregate
+    df_wins_per_team_historic_ncaa_no_ot =\
+    df_ncaa[df_ncaa["num_ot"] == 0].groupby("w_team_id").size().reset_index()
+
+    # Cosmetics
+    df_wins_per_team_historic_ncaa_no_ot.rename(columns={"w_team_id":"team_id", 0:"wins_no_ot"}, inplace=True) 
+
+    # Aggregate
+    df_wins_per_team_historic_ncaa_ot =\
+    df_ncaa[df_ncaa["num_ot"] > 0].groupby("w_team_id").size().reset_index()
+
+    # cosmetics
+    df_wins_per_team_historic_ncaa_ot.rename(columns={"w_team_id":"team_id", 0:"wins_ot"}, inplace=True)
+
+    df_wins_per_team_historic_ncaa_by_ot = \
+    pd.merge(
+        df_wins_per_team_historic_ncaa_no_ot,
+        df_wins_per_team_historic_ncaa_ot,
+        on=["team_id"],
+        how="outer"
+    )
+
+    # cosmetics
+    df_wins_per_team_historic_ncaa_by_ot.fillna(0, inplace=True)
+    df_wins_per_team_historic_ncaa_by_ot["wins_ot"] = df_wins_per_team_historic_ncaa_by_ot["wins_ot"].astype(int)
+    df_wins_per_team_historic_ncaa_by_ot["wins_no_ot"] = df_wins_per_team_historic_ncaa_by_ot["wins_no_ot"].astype(int)
+    write_table(df_wins_per_team_historic_ncaa_by_ot, "ncaa_wins_per_team_by_ot")
+
+def calculate_ncaa_losses_per_team_by_ot():
+    df_ncaa = get_table("t_original_ncaa_tourney_compact_results")
+
+    # Aggregate
+    df_losses_per_team_historic_ncaa_no_ot =\
+    df_ncaa[df_ncaa["num_ot"] == 0].groupby("l_team_id").size().reset_index()
+
+    # Cosmetics
+    df_losses_per_team_historic_ncaa_no_ot.rename(columns={"l_team_id":"team_id", 0:"losses_no_ot"}, inplace=True) 
+
+    # Aggregate
+    df_losses_per_team_historic_ncaa_ot =\
+    df_ncaa[df_ncaa["num_ot"] > 0].groupby("l_team_id").size().reset_index()
+
+    # cosmetics
+    df_losses_per_team_historic_ncaa_ot.rename(columns={"l_team_id":"team_id", 0:"losses_ot"}, inplace=True)
+
+    df_losses_per_team_historic_ncaa_by_ot = \
+    pd.merge(
+        df_losses_per_team_historic_ncaa_no_ot,
+        df_losses_per_team_historic_ncaa_ot,
+        on=["team_id"],
+        how="outer"
+    )
+
+    # cosmetics
+    df_losses_per_team_historic_ncaa_by_ot.fillna(0, inplace=True)
+    df_losses_per_team_historic_ncaa_by_ot["losses_ot"] = df_losses_per_team_historic_ncaa_by_ot["losses_ot"].astype(int)
+    df_losses_per_team_historic_ncaa_by_ot["losses_no_ot"] = df_losses_per_team_historic_ncaa_by_ot["losses_no_ot"].astype(int)
+    write_table(df_losses_per_team_historic_ncaa_by_ot, "ncaa_losses_per_team_by_ot")
