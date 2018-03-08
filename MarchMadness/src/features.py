@@ -139,7 +139,7 @@ def calculate_wins_per_team_per_season_by_ot():
     df_wins_per_team_per_seaons_by_ot.fillna(0, inplace=True)
     df_wins_per_team_per_seaons_by_ot["wins_ot"] = df_wins_per_team_per_seaons_by_ot["wins_ot"].astype(int)
     df_wins_per_team_per_seaons_by_ot["wins_no_ot"] = df_wins_per_team_per_seaons_by_ot["wins_no_ot"].astype(int)
-    write_table(df_wins_per_team_per_seaons_by_ot, "wins_per_team_per_seaons_by_ot")
+    write_table(df_wins_per_team_per_seaons_by_ot, "wins_per_team_per_season_by_ot")
 
 
 def calculate_losses_per_team_per_season_by_ot():
@@ -174,7 +174,7 @@ def calculate_losses_per_team_per_season_by_ot():
     df_losses_per_team_per_seaons_by_ot.fillna(0, inplace=True)
     df_losses_per_team_per_seaons_by_ot["losses_ot"] = df_losses_per_team_per_seaons_by_ot["losses_ot"].astype(int)
     df_losses_per_team_per_seaons_by_ot["losses_no_ot"] = df_losses_per_team_per_seaons_by_ot["losses_no_ot"].astype(int)
-    write_table(df_losses_per_team_per_seaons_by_ot, "losses_per_team_per_seaons_by_ot")
+    write_table(df_losses_per_team_per_seaons_by_ot, "losses_per_team_per_season_by_ot")
 
 def calculate_ncaa_wins_per_team_by_ot():
     df_ncaa = get_table("t_original_ncaa_tourney_compact_results")
