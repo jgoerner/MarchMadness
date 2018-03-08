@@ -270,3 +270,69 @@ class OddTransformer(TransformerMixin):
         # drop artificial columns
         df_new.drop(["wins_a", "losses_a", "wins_b", "losses_b"], axis=1, inplace=True)
         return df_new
+
+
+class SeedTransformer(TransformerMixin):
+    
+    def __init__(self, team_id_a, team_id_b):
+        self.team_id_a = team_id_a
+        self.team_id_b = team_id_b
+    
+    def fit(self, X):
+        # minor sanity checking
+        if not isinstance(X, pd.DataFrame):
+            raise ValueError("Must pass a pandas DataFrame, got {}".format(type(X)))
+        col_diff = set([self.team_id_a, self.team_id_b, "season"]) - set(X.columns)
+        if len(col_diff) > 0:
+            raise ValueError(
+                "Specified columns can't be found in provided DataFrame: {}".format(col_diff))
+        return self
+    
+    def transform(self, X):
+        df_seeds = get_table("t_derived_seed_rank_region_per_team_per_season")
+        seed_cols = ["seed_rank", "seed_region"]
+
+        # merge team a seeds
+        df_merged_seeds_a = pd.merge(
+            X,
+            df_seeds,
+            how="left",
+            left_on=["season", self.team_id_a],
+            right_on=["season", "team_id"]
+        )[seed_cols]
+        df_merged_seeds_a.columns = map(lambda col: col + "_a", df_merged_seeds_a.columns)
+
+        # merge team b seeds
+        df_merged_seeds_b = pd.merge(
+            X,
+            df_seeds,
+            how="left",
+            left_on=["season", self.team_id_b],
+            right_on=["season", "team_id"]
+        )[seed_cols]
+        df_merged_seeds_b.columns = map(lambda col: col + "_b", df_merged_seeds_b.columns)
+
+        # merge seeds
+        df_merged_seeds = pd.merge(
+            df_merged_seeds_a,
+            df_merged_seeds_b,
+            left_index=True,
+            right_index=True,
+        )
+
+        # final merge
+        df_final = pd.merge(
+            X,
+            df_merged_seeds,
+            left_index=True,
+            right_index=True
+        )
+        
+        # check for non seeded team
+        if df_final[["seed_rank_a", "seed_rank_b"]].isnull().sum().sum() != 0:
+            # optional with warning
+            df_final[["seed_rank_a", "seed_rank_b"]] = df_final[["seed_rank_a", "seed_rank_b"]].fillna(99)
+        if df_final[["seed_region_a", "seed_region_b"]].isnull().sum().sum() != 0:
+            # optional with warning
+            df_final[["seed_region_a", "seed_region_b"]] = df_final[["seed_region_a", "seed_region_b"]].fillna("NOSEED")
+        return df_final

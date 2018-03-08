@@ -39,10 +39,10 @@ def calculate_mean_score_per_team_per_season():
 def calculate_seed_rank_per_team_per_season():
     df_seed_rank_per_team_per_season = get_table("t_original_ncaa_tourney_seeds")
     # strip beginning region and optional "a/b" (which might be of interest later on)
-    df_seed_rank_per_team_per_season["seed_rank"] = df_seed_rank_per_team_per_season["seed"].apply(
-        lambda seed: int(seed[1:]) if len(seed) == 3 else int(seed[1:-1]))
+    df_seed_rank_per_team_per_season["seed_rank"] = df_seed_rank_per_team_per_season["seed"].apply(lambda seed: int(seed[1:3]))
+    df_seed_rank_per_team_per_season["seed_region"] = df_seed_rank_per_team_per_season["seed"].apply(lambda seed: seed[0])
     df_seed_rank_per_team_per_season.drop("seed", axis=1, inplace=True)
-    write_table(df_seed_rank_per_team_per_season, "seed_rank_per_team_per_season")
+    write_table(df_seed_rank_per_team_per_season, "seed_rank_region_per_team_per_season")
 
 
 def calculate_mean_stats_per_team_per_season():
