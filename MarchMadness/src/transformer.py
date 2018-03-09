@@ -60,12 +60,6 @@ class WinLossTransformer(TransformerMixin):
             right_index=True,
         
         )
-        df_final = pd.merge(
-            X,
-            df_merged_wins,
-            left_index=True,
-            right_index=True
-        )
         
         ### LOSSES ###
         if self.split_by_ot:
@@ -112,7 +106,8 @@ class WinLossTransformer(TransformerMixin):
             df_merged_losses,
             left_index=True,
             right_index=True,
-        )
+        ).fillna(0)
+        df_final = df_final.astype(int)
         return df_final
 
 
@@ -169,12 +164,7 @@ class HistWinLossTransformer(TransformerMixin):
             right_index=True,
         
         )
-        df_final = pd.merge(
-            X,
-            df_merged_wins,
-            left_index=True,
-            right_index=True
-        )
+        
         ### LOSSES ###
         if self.split_by_ot:
             df_losses = get_table("t_derived_ncaa_losses_per_team_by_ot")
@@ -220,14 +210,15 @@ class HistWinLossTransformer(TransformerMixin):
             df_merged_losses,
             left_index=True,
             right_index=True,
-        )
+        ).fillna(0)
+        df_final = df_final.astype(int)
         return df_final
 
 
 class OddTransformer(TransformerMixin):
     """TODO: Docstring here"""
     
-    def __init__(self, cols_wins_a, cols_losses_a, cols_wins_b, cols_losses_b, n_samples=100, n_experiments=100):
+    def __init__(self, cols_wins_a, cols_losses_a, cols_wins_b, cols_losses_b, n_samples=100, n_experiments=100, laplace=True):
         # check every param instance of list
         self.cols_wins_a = cols_wins_a
         self.cols_losses_a = cols_losses_a
@@ -235,6 +226,7 @@ class OddTransformer(TransformerMixin):
         self.cols_losses_b = cols_losses_b
         self.n_samples = n_samples
         self.n_experiments = n_experiments
+        self.laplace=laplace
         
     def fit(self, X):
         # check if dataframe
@@ -260,11 +252,12 @@ class OddTransformer(TransformerMixin):
     
     def transform(self, X):
         # merge fitted cols to "wins_a", "losses_a", "wins_b", "losses_b"
+        # and optionlly apply laplace smoothing
         df_new = X.copy()
-        df_new["wins_a"] = df_new[self.cols_wins_a].sum(axis=1)
-        df_new["losses_a"] = df_new[self.cols_losses_a].sum(axis=1)
-        df_new["wins_b"] = df_new[self.cols_wins_b].sum(axis=1)
-        df_new["losses_b"] = df_new[self.cols_losses_b].sum(axis=1)
+        df_new["wins_a"] = df_new[self.cols_wins_a].sum(axis=1) + self.laplace
+        df_new["losses_a"] = df_new[self.cols_losses_a].sum(axis=1) + self.laplace
+        df_new["wins_b"] = df_new[self.cols_wins_b].sum(axis=1) + self.laplace
+        df_new["losses_b"] = df_new[self.cols_losses_b].sum(axis=1) + self.laplace
         # pass new DF to calculate_odds
         df_new = calc_odds(df_new, self.n_samples, self.n_experiments)
         # drop artificial columns
