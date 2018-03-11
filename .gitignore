@@ -101,7 +101,7 @@ ENV/
 .mypy_cache/
 
 # ENV files
-./config/jupyter.env
+config/jupyter.env
 
 # Other stuff
 *.DS_STORE
