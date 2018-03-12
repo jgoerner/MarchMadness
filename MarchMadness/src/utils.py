@@ -140,3 +140,32 @@ def evaluate_log_loss(preds):
     true_labels = np.ones(len(preds))
     ll = log_loss(true_labels, preds, labels=[1, 0])
     return ll
+
+def format_submission(X, col_season, col_team_id_w, col_team_id_l, col_odds_w, out=None, warning=True):
+    """TODO: Docstring here"""
+    # create skeleton df
+    df_result = pd.DataFrame(columns=["id", "pred"])
+    
+    # fill id
+    df_result["id"] = \
+        X[col_season].astype(str) \
+        + "_" \
+        + X[[col_team_id_w, col_team_id_l]].min(axis=1).astype(str) \
+        + "_" \
+        + X[[col_team_id_w, col_team_id_l]].max(axis=1).astype(str)
+    
+    # get odds
+    df_result["odds"] = X[col_odds_w]
+    
+    # invert if loser team id is smaller than winner team id
+    df_result["invert"] = (X[col_team_id_l] < X[col_team_id_w]).astype(int)
+    
+    # "flip" the odds where neccessary
+    df_result["pred"] = (df_result["odds"] - df_result["invert"]).apply(np.abs)
+    
+    # check kaggle specific
+    if warning & (df_result.shape[0] != 9112):
+        warnings.warn("Dataframe has {} records, but submission needs 9112 ".format(df_result.shape[0]))
+    
+    # return clean format
+    return df_result.drop(["odds", "invert"], axis=1)
