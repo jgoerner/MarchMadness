@@ -5,7 +5,7 @@ The actual content of the repository can be [found here](https://github.com/jgoe
 ## Requirements
 - [docker](https://docs.docker.com/install/)
 - [docker-compose](https://docs.docker.com/compose/install/)
-- a valid `jupyter.env` file containing access keys & tokens (send me a note)
+- a valid `jupyter.env` file containing access keys (`AWS_ACCESS_KEY_ID`) & tokens (`AWS_SECRET_ACCESS_KEY`)
 
 ## Setup of the environment
 0. put the `jupyter.env` into `./config` (build will fail if you don't)
